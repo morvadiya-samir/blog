@@ -11,13 +11,13 @@ export default function Navabar() {
                         <Link href="/">Home</Link>
                     </li>
                     <li>
-                        <Link href="/pages/about">About Us</Link>
+                        <Link href="/about">About Us</Link>
                     </li>
                     <li>
-                        <Link href="/pages/blog">Blog</Link>
+                        <Link href="/blog">Blog</Link>
                     </li>
                     <li>
-                        <Link href="/pages/contact">Contact</Link>
+                        <Link href="/contact">Contact</Link>
                     </li>
                 </ul>
             </nav>

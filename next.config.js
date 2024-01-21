@@ -6,7 +6,7 @@ const nextConfig = {
                 hostname: "flowbite.com",
             },
         ],
-    },  
+    },
 }
 
 module.exports = nextConfig
