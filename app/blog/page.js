@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import Blogcard from '@/app/componants/Blogcard'
+import Blogcard from '@/components/Blogcard'
 
 export default function blog() {
   const [data, setData] = useState([])

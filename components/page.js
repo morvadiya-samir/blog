@@ -1,5 +1,5 @@
 import React from 'react'
-import Blogcard from '@/app/componants/Blogcard'
+import Blogcard from '@/components/Blogcard'
 import { promises as fs } from 'fs';
 
 
