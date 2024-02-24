@@ -1,26 +1,13 @@
-const connectdb = require("./db");
-const Blog = require("./schema/Blog");
+export default function POST(request) {
 
-export default async function handler(req, res) {
-    connectdb();
+  if (request.method === 'POST') {
+    // console.log(request.formData())
+    // console.log(request.body.description)
+    // console.log(request.body.image)
 
-    if (req.body) {
-        console.log(req.body)
-    }
-
-    // try {
-
-    //     Blog.create({
-    //         title: req.body.title,
-    //         img_url: req.body.img_url,
-    //         description: req.body.description,
-    //     }).then(user => console.log(user));
-
-
-    // } catch (error) {
-    //     console.log("Error" + Error)
-    // }
-
-    // res.status(200)
+    res.status(200).json({  })
+  } else {
+    console.log("request")
+  }
 
 }

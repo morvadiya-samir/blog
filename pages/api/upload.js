@@ -1,30 +1,66 @@
-const { writeFile } = require('fs/promises');
+import Formidable from "Formidable";
+const fs = require("fs");
 
-export async function POST(request) {
-    const data = await request.formData();
-    const file = data.get('file');
-    if (!file) {
-        return {
-            status: 200,
-            body: JSON.stringify({ success: false }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-    }
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    // With the file data in the buffer, you can do whatever you want with it.
-    // For this, we'll just write it to the filesystem in a new location
-    const path = `/tmp/${file.name}`;
-    await writeFile(path, buffer);
-    console.log(`open ${path} to see the uploaded file`);
-    return {
-        status: 200,
-        body: JSON.stringify({ success: true }),
-        headers: {
-            'Content-Type': 'application/json'
+export const config = {
+  api: {
+    bodyParser: false
+  }
+};
+
+const uploadForm = next => (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    console.log("Run")
+    try {
+      const form = new Formidable.IncomingForm({
+        multiples: true,
+        keepExtensions: true
+      });
+      form.once("error", console.error);
+      form
+        .on("fileBegin", (name, file) => {
+          console.log("start uploading: ", file.name);
+        })
+        .on("aborted", () => console.log("Aborted..."));
+      form.once("end", () => {
+        console.log("Done!");
+      });
+      await form.parse(req, async (err, fields, files) => {
+        if (err) {
+          throw String(JSON.stringify(err, null, 2));
         }
-    };
+        console.log(
+          "moving file: ",
+          files.file.path,
+          " to ",
+          `public/upload/${files.file.name}`
+        );
+        // await fs.rename(
+        //   files.file.path,
+        //   `public/upload/${files.file.name}`,
+        //   err => {
+        //     if (err) throw err;
+        //   }
+        // );
+        fs.renameSync(files.file.path, `public/upload/${files.file.name}`);
+        req.form = { fields, files };
+        return resolve(next(req, res));
+      });
+    } catch (error) {
+      return resolve(res.status(403).send(error));
+    }
+  });
+};
+
+function handler(req, res) {
+  try {
+    if (req.method === "POST") {
+      res.status(200).send(req.form);
+    } else {
+      throw String("Method not allowed");
+    }
+  } catch (error) {
+    res.status(400).json({ message: JSON.stringify(error, null, 2) });
+  }
 }
 
+export default uploadForm(handler);

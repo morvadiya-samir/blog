@@ -1,34 +1,39 @@
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
-
-async function upload(data) {
-    'use server'
-    const file = data.get('file');
-    if (!file) {
-        throw new Error('No file uploaded');
-    }
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    // With the file data in the buffer, you can do whatever you want with it.
-    // For this, we'll just write it to the filesystem in a new location
-    const path = join('/tmp/', file.name);
-    await writeFile(path, buffer);
-    console.log(`open ${path} to see the uploaded file`);
-    return { success: true };
-}
-
 export default async function page() {
+
+    async function Submit(e) {
+        "use server"
+        e.preventDefault()
+        console.log(e);
+        const { userfile } = e;
+        const data = new FormData();
+        data.append("file", userfile[0]);
+        fetch("/api/upload", {
+            method: "POST",
+            // headers: {
+            //   "Content-Type": "multipart/form-data"
+            // },
+            body: data
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
 
     return (
         <main>
             <h1>React Server Component: Upload</h1>
-            <form action={upload}>
+            <form onSubmit={Submit}>
                 <input type="file" name="file" />
                 <input type="submit" value="Upload" />
             </form>
         </main>
     );
 }
+
 
 
 
